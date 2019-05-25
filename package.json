@@ -1,0 +1,33 @@
+{
+  "name": "iot_server",
+  "version": "1.0.0",
+  "description": "maintaining a persistent states of the IOT devices with mqtt pub-sub methods",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/j4ys/iot_server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/j4ys/iot_server/issues"
+  },
+  "homepage": "https://github.com/j4ys/iot_server#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/node": "^7.4.5",
+    "@babel/preset-env": "^7.4.5"
+  },
+  "dependencies": {
+    "apollo-server-express": "^2.5.0",
+    "express": "^4.17.0",
+    "graphql": "^14.3.1",
+    "mongoose": "^5.5.11",
+    "nodemon": "^1.19.0"
+  }
+}
