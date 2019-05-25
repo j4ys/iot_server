@@ -1,6 +1,9 @@
 import { ApolloServer, gql } from "apollo-server-express";
 import express from "express";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 import { typeDefs } from "./typeDefs";
 import { resolvers } from "./resolvers";
@@ -8,7 +11,7 @@ import { resolvers } from "./resolvers";
 const startServer = async () => {
   const app = express();
 
-  await mongoose.connect("mongodb://localhost:27017/zim", {
+  await mongoose.connect(process.env.DB_URI, {
     useNewUrlParser: true
   });
   const server = new ApolloServer({
