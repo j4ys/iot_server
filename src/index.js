@@ -22,16 +22,20 @@ const startServer = async () => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: ({ req, res }) => ({ req, res })
+    context: ({ req, res }) => ({ req, res }),
+    cors: {
+      credentials: true,
+      origin: "http://localhost:3000"
+    }
   });
 
-  app.use(cookieParser());
   app.use(
     cors({
       credentials: true,
-      origin: "http://localhost:3000"
+      origin: true
     })
   );
+  app.use(cookieParser());
 
   app.use(async (req, res, next) => {
     const refreshtoken = req.cookies["refresh-token"];
@@ -39,10 +43,12 @@ const startServer = async () => {
     // console.log(req.cookies);
     // console.log(refreshtoken);
     if (!accesstoken && !refreshtoken) {
+      console.log("both tokens are not avail");
       return next();
     }
 
     try {
+      console.log("verifying access token");
       const data = verify(accesstoken, process.env.ACCESS_TOKEN_SECRET);
       req.userId = data.userId;
       console.log("access token is valid " + data.userId);
@@ -50,18 +56,21 @@ const startServer = async () => {
     } catch {}
 
     if (!refreshtoken) {
+      console.log("refresh token not found");
       return next();
     }
 
     let data;
 
     try {
+      console.log("veryfing refresh token");
       data = verify(refreshtoken, process.env.REFRESH_TOKEN_SECRET);
     } catch {
+      console.log("err while verifying refresh toekn");
       return next();
     }
 
-    const user = await User.findOne({ id: data.userId });
+    const user = await User.findOne({ _id: data.userId });
 
     if (!user || user.count !== data.count) {
       return next();
@@ -76,7 +85,7 @@ const startServer = async () => {
     next();
   });
 
-  server.applyMiddleware({ app });
+  server.applyMiddleware({ app, cors: false });
 
   app.listen({ port: 4000 }, () => {
     console.log(
