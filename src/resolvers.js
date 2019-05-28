@@ -28,10 +28,17 @@ export const resolvers = {
       return await User.find();
     },
     me: async (_, __, { req }) => {
+      console.log("me query" + req.userId);
       if (!req.userId) {
-        return null;
+        return false;
       }
-      return await User.findOne(req.userId);
+      const user = await User.findOne({ _id: req.userId });
+      console.log(user);
+      if (!user) {
+        return false;
+      } else {
+        return true;
+      }
     },
     user: async (_, email) => {
       return await User.findOne(email);

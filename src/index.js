@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import { verify } from "jsonwebtoken";
+import cors from "cors";
 
 dotenv.config();
 
@@ -25,12 +26,18 @@ const startServer = async () => {
   });
 
   app.use(cookieParser());
+  app.use(
+    cors({
+      credentials: true,
+      origin: "http://localhost:3000"
+    })
+  );
 
   app.use(async (req, res, next) => {
     const refreshtoken = req.cookies["refresh-token"];
     const accesstoken = req.cookies["access-token"];
-    console.log(req.cookies);
-    console.log(refreshtoken);
+    // console.log(req.cookies);
+    // console.log(refreshtoken);
     if (!accesstoken && !refreshtoken) {
       return next();
     }
@@ -38,7 +45,7 @@ const startServer = async () => {
     try {
       const data = verify(accesstoken, process.env.ACCESS_TOKEN_SECRET);
       req.userId = data.userId;
-      console.log("access token is valid " + data.id);
+      console.log("access token is valid " + data.userId);
       return next();
     } catch {}
 
@@ -54,7 +61,7 @@ const startServer = async () => {
       return next();
     }
 
-    const user = await User.findOne(data.id);
+    const user = await User.findOne({ id: data.userId });
 
     if (!user || user.count !== data.count) {
       return next();

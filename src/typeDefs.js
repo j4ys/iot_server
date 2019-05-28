@@ -3,7 +3,7 @@ import { gql } from "apollo-server-express";
 export const typeDefs = gql`
   type Query {
     users: [User!]!
-    me: User!
+    me: Boolean!
     user(email: String!): User
   }
 
