@@ -1,30 +1,15 @@
 import User from "./Models/User";
+import Device from "./Models/Device";
 import * as yup from "yup";
 import FormatErrors from "./utils/FormatErrors";
 import bcrypt from "bcryptjs";
 import TokenGen from "./utils/TokenGen";
+import { registerschema, adddeviceschema } from "./utils/validationSchemas";
+import mqtt from "mqtt";
 
-const schema = yup.object().shape({
-  username: yup
-    .string()
-    .required()
-    .min(3)
-    .max(10),
-  email: yup
-    .string()
-    .required()
-    .email()
-    .min(10)
-    .max(255),
-  password: yup
-    .string()
-    .required()
-    .min(8)
-    .max(50)
-});
 export const resolvers = {
   Query: {
-    users: async () => {
+    users: async (_, __, { req, res }) => {
       return await User.find();
     },
     me: async (_, __, { req }) => {
@@ -42,12 +27,18 @@ export const resolvers = {
     },
     user: async (_, email) => {
       return await User.findOne(email);
+    },
+    devices: async (_, __, { req, res }) => {
+      if (!req.userId) {
+        throw new Error("user not logged in");
+      }
+      return await Device.find();
     }
   },
   Mutation: {
     register: async (_, args) => {
       try {
-        await schema.validate(args, { abortEarly: false });
+        await registerschema.validate(args, { abortEarly: false });
       } catch (err) {
         const errors = FormatErrors(err);
         return errors;
@@ -116,6 +107,93 @@ export const resolvers = {
       res.clearCookie("access-token");
       res.clearCookie("refresh-token");
       return true;
+    },
+    addDevice: async (_, args, { req, res }) => {
+      try {
+        await adddeviceschema.validate(args, { abortEarly: false });
+      } catch (err) {
+        const errors = FormatErrors(err);
+        return errors;
+      }
+      const { device_id, name } = args;
+      const deviceIdAlreadyExist = await Device.findOne({ device_id });
+      const nameAlreadyExist = await Device.findOne({ name });
+      let alreadyExistError = [];
+      console.log(deviceIdAlreadyExist);
+      if (deviceIdAlreadyExist) {
+        alreadyExistError.push({
+          path: "device_id",
+          message: "this device_id already exist"
+        });
+      }
+      if (nameAlreadyExist) {
+        alreadyExistError.push({
+          path: "name",
+          message: "device name already in use"
+        });
+      }
+      if (alreadyExistError.length !== 0) {
+        return alreadyExistError;
+      }
+      try {
+        const device = new Device(args);
+        device.save();
+      } catch (err) {
+        throw new Error("error occured while creating device");
+      }
+      return null;
+    },
+    removeDevice: (_, args, { req, res }) => {
+      let { device_id } = args;
+      try {
+        User.findOneAndDelete({ device_id }).exec((err, res) => {
+          if (err) {
+            console.log(err);
+            return false;
+          } else {
+            return true;
+          }
+        });
+      } catch (err) {
+        throw new Error("error occured while removing device");
+      }
+    },
+    changeDeviceId: async (_, args, { req, res }) => {
+      let { name, device_id } = args;
+      try {
+        await Device.findOneAndUpdate({ name }, { $set: { device_id } });
+        return await Device.findOne({ device_id });
+      } catch {}
+    },
+    plusTemp: async (_, args, { req, res }) => {
+      const { device_id } = args;
+      await Device.findOneAndUpdate({ device_id }, { $inc: { temp: 1 } });
+
+      const device = await Device.findOne({ device_id });
+      const client = mqtt.connect("mqtt://127.168.1.2", {
+        clientId: device.name
+      });
+      client.publish(`feeds/${device_id}/temp`, device.temp.toString());
+      return device;
+    },
+    minusTemp: async (_, args, { req, res }) => {
+      const { device_id } = args;
+      await Device.findOneAndUpdate({ device_id }, { $inc: { temp: -1 } });
+      const device = await Device.findOne({ device_id });
+      const client = mqtt.connect("mqtt://127.168.1.2", {
+        clientId: device.name
+      });
+      client.publish(`feeds/device1/temp`, device.temp.toString());
+      return device;
+    },
+    changestatus: async (_, args, { req, res }) => {
+      const { device_id } = args;
+      const device = await Device.findOne({ device_id });
+      await Device.findOneAndUpdate(
+        { device_id },
+        { $set: { status: !device.status } }
+      );
+      return await Device.findOne({ device_id });
     }
   }
 };
