@@ -157,20 +157,21 @@ export const resolvers = {
       }
       return null;
     },
-    removeDevice: (_, args, { req, res }) => {
+    removeDevice: async (_, args, { req, res }) => {
       let { device_id } = args;
-      try {
-        User.findOneAndDelete({ device_id }).exec((err, res) => {
-          if (err) {
-            console.log(err);
-            return false;
-          } else {
-            return true;
-          }
-        });
-      } catch (err) {
-        throw new Error("error occured while removing device");
+      console.log(device_id);
+      const resp = await Device.findOneAndDelete({ device_id });
+      console.log(resp);
+      if (resp) {
+        return true;
       }
+      return false;
+      // console.log(res);
+      // if (res) {
+      //   return true;
+      // } else {
+      //   return false;
+      // }
     },
     changeDeviceId: async (_, args, { req, res }) => {
       let { name, device_id } = args;
