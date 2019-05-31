@@ -12,6 +12,20 @@ export const resolvers = {
     users: async (_, __, { req, res }) => {
       return await User.find();
     },
+    isAdmin: async (_, __, { req, res }) => {
+      if (!req.userId) {
+        return false;
+      }
+      try {
+        const user = await User.findOne({ _id: req.userId });
+        if (user.isadmin) {
+          return true;
+        }
+      } catch (err) {
+        return false;
+      }
+      return false;
+    },
     me: async (_, __, { req }) => {
       console.log("me query" + req.userId);
       if (!req.userId) {

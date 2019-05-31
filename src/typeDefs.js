@@ -6,6 +6,7 @@ export const typeDefs = gql`
     me: Boolean!
     user(email: String!): User
     devices: [Device!]!
+    isAdmin: Boolean!
   }
 
   type Device {
