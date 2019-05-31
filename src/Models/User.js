@@ -18,6 +18,10 @@ const User = mongoose.model("User", {
   count: {
     type: Number,
     default: 0
+  },
+  isadmin:{
+    type: Boolean,
+    default: false
   }
 });
 
