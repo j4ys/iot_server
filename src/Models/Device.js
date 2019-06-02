@@ -18,6 +18,11 @@ const Device = mongoose.model("Device", {
   status: {
     type: Boolean,
     required: true
+  },
+  location: {
+    type: String,
+    required: true,
+    default: "Location1"
   }
 });
 

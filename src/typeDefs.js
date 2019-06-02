@@ -40,5 +40,6 @@ export const typeDefs = gql`
     email: String!
     count: Int
     isadmin: Boolean
+    location: String!
   }
 `;
