@@ -15,6 +15,7 @@ export const typeDefs = gql`
     device_id: String!
     temp: Int
     status: Boolean!
+    location: String!
   }
 
   type Error {
@@ -40,6 +41,5 @@ export const typeDefs = gql`
     email: String!
     count: Int
     isadmin: Boolean
-    location: String!
   }
 `;
