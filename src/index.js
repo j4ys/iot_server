@@ -48,10 +48,10 @@ const startServer = async () => {
     }
 
     try {
-      console.log("verifying access token");
+      // console.log("verifying access token");
       const data = verify(accesstoken, process.env.ACCESS_TOKEN_SECRET);
       req.userId = data.userId;
-      console.log("access token is valid " + data.userId);
+      // console.log("access token is valid " + data.userId);
       return next();
     } catch {}
 

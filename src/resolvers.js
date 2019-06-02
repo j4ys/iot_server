@@ -185,33 +185,38 @@ export const resolvers = {
       await Device.findOneAndUpdate({ device_id }, { $inc: { temp: 1 } });
 
       const device = await Device.findOne({ device_id });
-      const client = mqtt.connect("mqtt://127.168.1.2", {
+      const client = mqtt.connect("mqtt://127.168.1.6", {
         clientId: device.name
       });
-      client.publish(`feeds/${device_id}/temp`, device.temp.toString());
+      client.publish(`/feeds/location1/off`, device.temp.toString());
       return device;
     },
     minusTemp: async (_, args, { req, res }) => {
       const { device_id } = args;
       await Device.findOneAndUpdate({ device_id }, { $inc: { temp: -1 } });
       const device = await Device.findOne({ device_id });
-      const client = mqtt.connect("mqtt://127.168.1.2", {
+      const client = mqtt.connect("mqtt://127.168.1.6", {
         clientId: device.name
       });
-      client.publish(`feeds/${device_id}/temp`, device.temp.toString());
+      // client.publish(`feeds/${device_id}/temp`, device.temp.toString());
+      client.publish(`/feeds/location1/off`, device.temp.toString());
       return device;
     },
     changestatus: async (_, args, { req, res }) => {
+      console.log("changestatus");
       const { device_id } = args;
+      const olddevice = await Device.findOne({ device_id });
       await Device.findOneAndUpdate(
         { device_id },
-        { $set: { status: !device.status } }
+        { $set: { status: !olddevice.status } }
       );
       const device = await Device.findOne({ device_id });
-      const client = mqtt.connect("mqtt://127.168.1.2", {
+      console.log("fetched device = " + device);
+      const client = mqtt.connect("mqtt://127.168.1.6", {
         clientId: device.name
       });
-      client.publish(`feeds/${device_id}/status`, device.status.toString());
+      // client.publish(`feeds/${device_id}/status`, device.status.toString());
+      client.publish(`/feeds/location1/off`, device.status.toString());
       return device;
     }
   }
