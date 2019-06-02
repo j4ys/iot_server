@@ -15,6 +15,10 @@ const Device = mongoose.model("Device", {
     type: Number,
     default: 0
   },
+  ctemp: {
+    type: Number,
+    default: 0
+  },
   status: {
     type: Boolean,
     required: true
@@ -23,6 +27,11 @@ const Device = mongoose.model("Device", {
     type: String,
     required: true,
     default: "Location1"
+  },
+  human: {
+    type: Boolean,
+    required: true,
+    default: false
   }
 });
 

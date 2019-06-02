@@ -16,6 +16,8 @@ export const typeDefs = gql`
     temp: Int
     status: Boolean!
     location: String!
+    ctemp: Int
+    human: Boolean!
   }
 
   type Error {
@@ -40,6 +42,7 @@ export const typeDefs = gql`
     changestatus(device_id: String!): Device!
     changeTemp(device_id: String!, temp: Int!): Boolean!
     changepower(device_id: String!, value: Boolean!): Boolean!
+    humanpresence(device_id: String!, value: Boolean!): Boolean!
   }
 
   type User {

@@ -193,7 +193,7 @@ export const resolvers = {
         const client = mqtt.connect("mqtt://127.168.1.6", {
           clientId: device.name
         });
-        client.publish(`/feeds/location1/off`, device.temp.toString());
+        client.publish(`/feeds/Location1/temp`, device.temp.toString());
       }
       return device;
     },
@@ -206,7 +206,11 @@ export const resolvers = {
           clientId: device.name
         });
         // client.publish(`feeds/${device_id}/temp`, device.temp.toString());
-        client.publish(`/feeds/location1/off`, device.temp.toString());
+        let pub = client.publish(
+          `/feeds/Location1/temp`,
+          device.temp.toString()
+        );
+        console.log("pub = " + pub);
       }
       return device;
     },
@@ -225,7 +229,7 @@ export const resolvers = {
           clientId: device.name
         });
         // client.publish(`feeds/${device_id}/status`, device.status.toString());
-        client.publish(`/feeds/location1/off`, device.status.toString());
+        client.publish(`/feeds/Location1/status`, device.status.toString());
       }
       return device;
     },
@@ -248,11 +252,22 @@ export const resolvers = {
       console.log(temp);
       const res = await Device.findOneAndUpdate(
         { device_id: device_id },
-        { $set: { temp: temp } }
+        { $set: { ctemp: temp } }
       );
       const dev = await Device.findOne({ device_id });
       console.log(dev);
       // console.log(res);
+      if (!res) {
+        return false;
+      }
+      return true;
+    },
+    humanpresence: async (_, args) => {
+      const { device_id, value } = args;
+      const res = await Device.findOneAndUpdate(
+        { device_id: device_id },
+        { $set: { human: value } }
+      );
       if (!res) {
         return false;
       }
