@@ -43,9 +43,9 @@ export const resolvers = {
       return await User.findOne(email);
     },
     devices: async (_, __, { req, res }) => {
-      if (!req.userId) {
-        throw new Error("user not logged in");
-      }
+      // if (!req.userId) {
+      //   throw new Error("user not logged in");
+      // }
       return await Device.find();
     }
   },
@@ -228,6 +228,35 @@ export const resolvers = {
         client.publish(`/feeds/location1/off`, device.status.toString());
       }
       return device;
+    },
+    changepower: async (_, args, { req, res }) => {
+      console.log("changestatus");
+      const { device_id, value } = args;
+      console.log(value);
+      const response = await Device.findOneAndUpdate(
+        { device_id },
+        { $set: { status: value } }
+      );
+      if (!response.data) {
+        return false;
+      }
+      return true;
+    },
+    changeTemp: async (_, args, __) => {
+      const { device_id, temp } = args;
+      console.log(device_id);
+      console.log(temp);
+      const res = await Device.findOneAndUpdate(
+        { device_id: device_id },
+        { $set: { temp: temp } }
+      );
+      const dev = await Device.findOne({ device_id });
+      console.log(dev);
+      // console.log(res);
+      if (!res) {
+        return false;
+      }
+      return true;
     }
   }
 };
