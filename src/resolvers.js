@@ -198,17 +198,21 @@ export const resolvers = {
       const client = mqtt.connect("mqtt://127.168.1.2", {
         clientId: device.name
       });
-      client.publish(`feeds/device1/temp`, device.temp.toString());
+      client.publish(`feeds/${device_id}/temp`, device.temp.toString());
       return device;
     },
     changestatus: async (_, args, { req, res }) => {
       const { device_id } = args;
-      const device = await Device.findOne({ device_id });
       await Device.findOneAndUpdate(
         { device_id },
         { $set: { status: !device.status } }
       );
-      return await Device.findOne({ device_id });
+      const device = await Device.findOne({ device_id });
+      const client = mqtt.connect("mqtt://127.168.1.2", {
+        clientId: device.name
+      });
+      client.publish(`feeds/${device_id}/status`, device.status.toString());
+      return device;
     }
   }
 };
