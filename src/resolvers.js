@@ -126,6 +126,7 @@ export const resolvers = {
       return true;
     },
     addDevice: async (_, args, { req, res }) => {
+      console.log(args);
       try {
         await adddeviceschema.validate(args, { abortEarly: false });
       } catch (err) {

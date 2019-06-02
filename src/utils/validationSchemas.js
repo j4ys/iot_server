@@ -16,12 +16,7 @@ export const registerschema = yup.object().shape({
     .string()
     .required()
     .min(8)
-    .max(50),
-  location: yup
-    .string()
-    .required()
-    .min(5)
-    .max(20)
+    .max(50)
 });
 
 export const adddeviceschema = yup.object().shape({
@@ -35,5 +30,10 @@ export const adddeviceschema = yup.object().shape({
     .required()
     .min(3)
     .max(8),
-  status: yup.boolean().required()
+  status: yup.boolean().required(),
+  location: yup
+    .string()
+    .required()
+    .min(5)
+    .max(20)
 });
