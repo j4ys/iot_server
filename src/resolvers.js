@@ -91,7 +91,10 @@ export const resolvers = {
       return null;
     },
     login: async (_, { email, password }, { __, res }) => {
-      const data = await User.findOne({ email: email });
+      const data = await User.findOne({
+        $or: [{ email: email }, { username: email }]
+      });
+      console.log(data);
       //check if we found a user with that email
       if (!data) {
         return null;
