@@ -27,7 +27,12 @@ export const typeDefs = gql`
     register(username: String!, email: String!, password: String): [Error!]
     login(email: String!, password: String!): User
     logout: Boolean!
-    addDevice(name: String!, device_id: String!, status: Boolean!): [Error!]
+    addDevice(
+      name: String!
+      device_id: String!
+      status: Boolean!
+      location: String!
+    ): [Error!]
     removeDevice(device_id: String!): Boolean!
     changeDeviceId(name: String!, device_id: String!): Device!
     plusTemp(device_id: String!): Device!
