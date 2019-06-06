@@ -3,7 +3,7 @@ import { gql } from "apollo-server-express";
 export const typeDefs = gql`
   type Query {
     users: [User!]!
-    me: Boolean!
+    me: User
     user(email: String!): User
     devices: [Device!]!
     isAdmin: Boolean!
@@ -43,6 +43,7 @@ export const typeDefs = gql`
     changeTemp(device_id: String!, temp: Int!): Boolean!
     changepower(device_id: String!, value: Boolean!): Boolean!
     humanpresence(device_id: String!, value: Boolean!): Boolean!
+    changeappstatus(device_id:String!): Boolean!
   }
 
   type User {

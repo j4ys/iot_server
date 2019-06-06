@@ -29,14 +29,14 @@ export const resolvers = {
     me: async (_, __, { req }) => {
       console.log("me query" + req.userId);
       if (!req.userId) {
-        return false;
+        return null;
       }
       const user = await User.findOne({ _id: req.userId });
       console.log(user);
       if (!user) {
-        return false;
+        return null;
       } else {
-        return true;
+        return user;
       }
     },
     user: async (_, email) => {
@@ -193,7 +193,11 @@ export const resolvers = {
         const client = mqtt.connect("mqtt://127.168.1.6", {
           clientId: device.name
         });
-        client.publish(`/feeds/Location1/temp`, device.temp.toString());
+        const r = await client.publish(
+          `/feeds/${device.location}/${device.device_id}/temp`,
+          device.temp.toString()
+        );
+        // console.log("publish result = " + Object.keys(r));
       }
       return device;
     },
@@ -205,11 +209,16 @@ export const resolvers = {
         const client = mqtt.connect("mqtt://127.168.1.6", {
           clientId: device.name
         });
-        // client.publish(`feeds/${device_id}/temp`, device.temp.toString());
-        let pub = client.publish(
-          `/feeds/Location1/temp`,
+        const r = await client.publish(
+          `/feeds/${device.location}/${device.device_id}/temp`,
           device.temp.toString()
         );
+
+        console.log("publish result = " + r);
+        // let pub = client.publish(
+        //   `/feeds/Location1/temp`,
+        //   device.temp.toString()
+        // );
         console.log("pub = " + pub);
       }
       return device;
@@ -223,14 +232,18 @@ export const resolvers = {
         { $set: { status: !olddevice.status } }
       );
       const device = await Device.findOne({ device_id });
-      if (req.userId) {
-        console.log("fetched device = " + device);
-        const client = mqtt.connect("mqtt://127.168.1.6", {
-          clientId: device.name
-        });
-        // client.publish(`feeds/${device_id}/status`, device.status.toString());
-        client.publish(`/feeds/Location1/status`, device.status.toString());
-      }
+      // if (req.userId) {
+      //   console.log("fetched device = " + device);
+      //   const client = mqtt.connect("mqtt://127.168.1.6", {
+      //     clientId: device.name
+      //   });
+      //   const r = await client.publish(
+      //     `/feeds/${device.location}/${device.device_id}/status`,
+      //     device.status.toString()
+      //   );
+      //   console.log(`publish data = ${r}`);
+      //   // client.publish(`/feeds/Location1/status`, device.status.toString());
+      // }
       return device;
     },
     changepower: async (_, args, { req, res }) => {
@@ -271,6 +284,23 @@ export const resolvers = {
       if (!res) {
         return false;
       }
+      return true;
+    },
+    changeappstatus: async (_, args) => {
+      const { device_id } = args;
+      const device = await Device.findOne({ device_id });
+      if (!device) {
+        return false;
+      }
+      const dstatus = !device.status;
+      const client = mqtt.connect("mqtt://127.168.1.6", {
+        clientId: device.name
+      });
+      const r = await client.publish(
+        `/feeds/${device.location}/${device.device_id}/status`,
+        dstatus.toString()
+      );
+      console.log(`publish data = ${r}`);
       return true;
     }
   }
