@@ -18,7 +18,7 @@ const startServer = async () => {
   const app = express();
 
   try {
-    await mongoose.connect("mogodb://zim:zimpass@localhost:27017/zim", {
+    await mongoose.connect("mongodb://zim:zimpass@localhost:27017/zim", {
       useNewUrlParser: true
     });
   } catch (err) {
