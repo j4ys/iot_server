@@ -41,9 +41,12 @@ export const typeDefs = gql`
     minusTemp(device_id: String!): Device!
     changestatus(device_id: String!): Device!
     changeTemp(device_id: String!, temp: Int!): Boolean!
+    changeCTemp(device_id: String!, temp: Int!): Boolean!
     changepower(device_id: String!, value: Boolean!): Boolean!
     humanpresence(device_id: String!, value: Boolean!): Boolean!
-    changeappstatus(device_id:String!): Boolean!
+    changeappstatus(device_id: String!): Boolean!
+    publishAllTemp(temp: Int!): Boolean!
+    changeAllTemp(temp: Int!): Boolean!
   }
 
   type User {

@@ -1,12 +1,10 @@
 import User from "./Models/User";
 import Device from "./Models/Device";
-import * as yup from "yup";
 import FormatErrors from "./utils/FormatErrors";
 import bcrypt from "bcryptjs";
 import TokenGen from "./utils/TokenGen";
 import { registerschema, adddeviceschema } from "./utils/validationSchemas";
-import mqtt from "mqtt";
-
+import { CreateCon } from "./MqttCon";
 export const resolvers = {
   Query: {
     users: async (_, __, { req, res }) => {
@@ -27,7 +25,6 @@ export const resolvers = {
       return false;
     },
     me: async (_, __, { req }) => {
-      console.log("me query" + req.userId);
       if (!req.userId) {
         return null;
       }
@@ -43,9 +40,6 @@ export const resolvers = {
       return await User.findOne(email);
     },
     devices: async (_, __, { req, res }) => {
-      // if (!req.userId) {
-      //   throw new Error("user not logged in");
-      // }
       return await Device.find();
     }
   },
@@ -186,32 +180,29 @@ export const resolvers = {
     },
     plusTemp: async (_, args, { req, res }) => {
       const { device_id } = args;
-      await Device.findOneAndUpdate({ device_id }, { $inc: { temp: 1 } });
+      // await Device.findOneAndUpdate({ device_id }, { $inc: { temp: 1 } });
 
       const device = await Device.findOne({ device_id });
+      const t = device.temp + 1;
       if (req.userId) {
-        const client = mqtt.connect("mqtt://127.168.1.6", {
-          clientId: device.name
-        });
+        const client = CreateCon(device.name);
         const r = await client.publish(
           `/feeds/${device.location}/${device.device_id}/temp`,
-          device.temp.toString()
+          t.toString()
         );
-        // console.log("publish result = " + Object.keys(r));
       }
       return device;
     },
     minusTemp: async (_, args, { req, res }) => {
       const { device_id } = args;
-      await Device.findOneAndUpdate({ device_id }, { $inc: { temp: -1 } });
+      // await Device.findOneAndUpdate({ device_id }, { $inc: { temp: -1 } });
       const device = await Device.findOne({ device_id });
+      const t = device.temp - 1;
       if (req.userId) {
-        const client = mqtt.connect("mqtt://127.168.1.6", {
-          clientId: device.name
-        });
+        const client = CreateCon(device.name);
         const r = await client.publish(
           `/feeds/${device.location}/${device.device_id}/temp`,
-          device.temp.toString()
+          t.toString()
         );
 
         console.log("publish result = " + r);
@@ -232,18 +223,6 @@ export const resolvers = {
         { $set: { status: !olddevice.status } }
       );
       const device = await Device.findOne({ device_id });
-      // if (req.userId) {
-      //   console.log("fetched device = " + device);
-      //   const client = mqtt.connect("mqtt://127.168.1.6", {
-      //     clientId: device.name
-      //   });
-      //   const r = await client.publish(
-      //     `/feeds/${device.location}/${device.device_id}/status`,
-      //     device.status.toString()
-      //   );
-      //   console.log(`publish data = ${r}`);
-      //   // client.publish(`/feeds/Location1/status`, device.status.toString());
-      // }
       return device;
     },
     changepower: async (_, args, { req, res }) => {
@@ -259,13 +238,30 @@ export const resolvers = {
       }
       return true;
     },
-    changeTemp: async (_, args, __) => {
+    changeCTemp: async (_, args, __) => {
       const { device_id, temp } = args;
       console.log(device_id);
       console.log(temp);
       const res = await Device.findOneAndUpdate(
         { device_id: device_id },
         { $set: { ctemp: temp } }
+      );
+      const dev = await Device.findOne({ device_id });
+      console.log(dev);
+      // console.log(res);
+      if (!res) {
+        return false;
+      }
+      return true;
+    },
+    changeTemp: async (_, args, __) => {
+      console.log("this is change te=mp");
+      const { device_id, temp } = args;
+      console.log(device_id);
+      console.log(temp);
+      const res = await Device.findOneAndUpdate(
+        { device_id: device_id },
+        { $set: { temp: temp } }
       );
       const dev = await Device.findOne({ device_id });
       console.log(dev);
@@ -293,14 +289,26 @@ export const resolvers = {
         return false;
       }
       const dstatus = !device.status;
-      const client = mqtt.connect("mqtt://127.168.1.6", {
-        clientId: device.name
-      });
+      const client = CreateCon(device.name);
       const r = await client.publish(
         `/feeds/${device.location}/${device.device_id}/status`,
         dstatus.toString()
       );
       console.log(`publish data = ${r}`);
+      return true;
+    },
+    publishAllTemp: async (_, args) => {
+      const { temp } = args;
+      console.log(temp);
+      const client = CreateCon("app");
+
+      await client.publish("/feeds/all/temp", temp.toString());
+      return true;
+    },
+    changeAllTemp: async (_, args) => {
+      const { temp } = args;
+
+      await Device.updateMany({ status: true }, { $set: { temp: temp } });
       return true;
     }
   }

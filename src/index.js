@@ -12,7 +12,7 @@ import { typeDefs } from "./typeDefs";
 import { resolvers } from "./resolvers";
 import User from "./Models/User";
 import TokenGen from "./utils/TokenGen";
-
+console.log(process.env);
 const startServer = async () => {
   const app = express();
 
