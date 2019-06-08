@@ -16,9 +16,13 @@ console.log(process.env);
 const startServer = async () => {
   const app = express();
 
-  await mongoose.connect(process.env.DB_URI, {
-    useNewUrlParser: true
-  });
+  try {
+    await mongoose.connect(process.env.DB_URI, {
+      useNewUrlParser: true
+    });
+  } catch (err) {
+    console.log(err);
+  }
   const server = new ApolloServer({
     typeDefs,
     resolvers,
