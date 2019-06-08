@@ -183,6 +183,9 @@ export const resolvers = {
       // await Device.findOneAndUpdate({ device_id }, { $inc: { temp: 1 } });
 
       const device = await Device.findOne({ device_id });
+      if (device.temp === 28) {
+        return device;
+      }
       const t = device.temp + 1;
       if (req.userId) {
         const client = CreateCon(device.name);
@@ -197,6 +200,9 @@ export const resolvers = {
       const { device_id } = args;
       // await Device.findOneAndUpdate({ device_id }, { $inc: { temp: -1 } });
       const device = await Device.findOne({ device_id });
+      if (device.temp === 18) {
+        return device;
+      }
       const t = device.temp - 1;
       if (req.userId) {
         const client = CreateCon(device.name);
@@ -204,13 +210,6 @@ export const resolvers = {
           `/feeds/${device.location}/${device.device_id}/temp`,
           t.toString()
         );
-
-        console.log("publish result = " + r);
-        // let pub = client.publish(
-        //   `/feeds/Location1/temp`,
-        //   device.temp.toString()
-        // );
-        console.log("pub = " + pub);
       }
       return device;
     },

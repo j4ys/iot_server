@@ -13,7 +13,7 @@ const Device = mongoose.model("Device", {
   },
   temp: {
     type: Number,
-    default: 0
+    default: 18
   },
   ctemp: {
     type: Number,
