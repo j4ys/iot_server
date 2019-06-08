@@ -96,7 +96,7 @@ const startServer = async () => {
     next();
   });
 
-  server.applyMiddleware({ app, cors: false });
+  // server.applyMiddleware({ app, cors: false });
 
   app.listen({ port: 4000 }, () => {
     console.log(
