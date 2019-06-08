@@ -1,3 +1,4 @@
+import "babel-polyfill";
 import { ApolloServer, gql } from "apollo-server-express";
 import express from "express";
 import mongoose from "mongoose";
