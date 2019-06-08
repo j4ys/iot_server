@@ -27,17 +27,17 @@ const startServer = async () => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: ({ req, res }) => ({ req, res }),
-    cors: {
-      credentials: true,
-      origin: "http://localhost:3000"
-    }
+    context: ({ req, res }) => ({ req, res })
+    // cors: {
+    //   credentials: true,
+    //   origin: "http://localhost:3000"
+    // }
   });
 
   app.use(
     cors({
-      credentials: true,
-      origin: true
+      credentials: true
+      // origin: true
     })
   );
   app.use(cookieParser());
@@ -54,7 +54,10 @@ const startServer = async () => {
 
     try {
       // console.log("verifying access token");
-      const data = verify(accesstoken, process.env.ACCESS_TOKEN_SECRET);
+      const data = verify(
+        accesstoken,
+        "sdfakjsdfhksahdfkjashfdkjlahfkjahfkjashfkjahfjasdfhkjasfh"
+      );
       req.userId = data.userId;
       // console.log("access token is valid " + data.userId);
       return next();
@@ -69,7 +72,10 @@ const startServer = async () => {
 
     try {
       console.log("veryfing refresh token");
-      data = verify(refreshtoken, process.env.REFRESH_TOKEN_SECRET);
+      data = verify(
+        refreshtoken,
+        "jaskdjfklasdfqwueroiuweoiruqoiweurqemwrbmqwebrmnqwbermqwberhh"
+      );
     } catch {
       console.log("err while verifying refresh toekn");
       return next();
