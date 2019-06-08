@@ -18,7 +18,7 @@ const startServer = async () => {
   const app = express();
 
   try {
-    await mongoose.connect("mongodb://zim:zimpass@localhost:27017/zim", {
+    await mongoose.connect("mongodb://localhost:27017/zim", {
       useNewUrlParser: true
     });
   } catch (err) {
@@ -96,9 +96,9 @@ const startServer = async () => {
     next();
   });
 
-  // server.applyMiddleware({ app, cors: false });
+  server.applyMiddleware({ app, cors: false });
 
-  server.applyMiddleware({ app });
+  // server.applyMiddleware({ app });
   app.listen({ port: 4000 }, () => {
     console.log(
       `🚀 Server ready at http://localhost:4000${server.graphqlPath}`
