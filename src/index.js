@@ -27,17 +27,17 @@ const startServer = async () => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: ({ req, res }) => ({ req, res })
-    // cors: {
-    //   credentials: true,
-    //   origin: "http://localhost:3000"
-    // }
+    context: ({ req, res }) => ({ req, res }),
+    cors: {
+      credentials: true,
+      origin: "http://localhost:3000"
+    }
   });
 
   app.use(
     cors({
-      credentials: true
-      // origin: true
+      credentials: true,
+      origin: true
     })
   );
   app.use(cookieParser());
@@ -98,6 +98,7 @@ const startServer = async () => {
 
   // server.applyMiddleware({ app, cors: false });
 
+  server.applyMiddleware({ app });
   app.listen({ port: 4000 }, () => {
     console.log(
       `🚀 Server ready at http://localhost:4000${server.graphqlPath}`
