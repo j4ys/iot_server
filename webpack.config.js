@@ -3,7 +3,7 @@ const webpack = require("webpack");
 
 module.exports = {
   target: "node",
-  mode: "development",
+  mode: "production",
   entry: ["babel-polyfill", "./src/index.js"],
   output: {
     path: path.resolve(__dirname, "dist"),
