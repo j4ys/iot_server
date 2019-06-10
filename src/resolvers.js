@@ -41,6 +41,10 @@ export const resolvers = {
     },
     devices: async (_, __, { req, res }) => {
       return await Device.find();
+    },
+    device: async (_, args) => {
+	    const {device_id} = args
+    	return await Device.findOne({device_id: device_id}); 
     }
   },
   Mutation: {
@@ -150,6 +154,12 @@ export const resolvers = {
       try {
         const device = new Device(args);
         device.save();
+
+	const client = CreateCon(args.name);
+        const r = await client.publish(
+          `/feeds/adddevice`,
+          args.device_id
+        );
       } catch (err) {
         throw new Error("error occured while creating device");
       }

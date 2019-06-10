@@ -18,7 +18,7 @@ const startServer = async () => {
   const app = express();
 
   try {
-    await mongoose.connect("mongodb://localhost:27017/zim", {
+    await mongoose.connect("mongodb://zim:zimpass@localhost:27017/zim", {
       useNewUrlParser: true
     });
   } catch (err) {
@@ -30,7 +30,7 @@ const startServer = async () => {
     context: ({ req, res }) => ({ req, res }),
     cors: {
       credentials: true,
-      origin: "http://localhost:3000"
+      origin: "https://embryo.netlify.com"
     }
   });
 
