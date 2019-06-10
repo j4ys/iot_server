@@ -7,7 +7,7 @@ export const typeDefs = gql`
     user(email: String!): User
     devices: [Device!]!
     isAdmin: Boolean!
-    device(device_id:String!): Device
+    device(device_id: String!): Device
   }
 
   type Device {
@@ -48,6 +48,8 @@ export const typeDefs = gql`
     changeappstatus(device_id: String!): Boolean!
     publishAllTemp(temp: Int!): Boolean!
     changeAllTemp(temp: Int!): Boolean!
+    publishAllStatus(status: Boolean!): Boolean!
+    changeAllStatus(status: Boolean!): Boolean!
   }
 
   type User {

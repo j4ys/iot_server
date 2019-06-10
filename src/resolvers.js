@@ -43,8 +43,8 @@ export const resolvers = {
       return await Device.find();
     },
     device: async (_, args) => {
-	    const {device_id} = args
-    	return await Device.findOne({device_id: device_id}); 
+      const { device_id } = args;
+      return await Device.findOne({ device_id: device_id });
     }
   },
   Mutation: {
@@ -155,11 +155,8 @@ export const resolvers = {
         const device = new Device(args);
         device.save();
 
-	const client = CreateCon(args.name);
-        const r = await client.publish(
-          `/feeds/adddevice`,
-          args.device_id
-        );
+        const client = CreateCon(args.name);
+        const r = await client.publish(`/feeds/adddevice`, args.device_id);
       } catch (err) {
         throw new Error("error occured while creating device");
       }
@@ -318,6 +315,17 @@ export const resolvers = {
       const { temp } = args;
 
       await Device.updateMany({ status: true }, { $set: { temp: temp } });
+      return true;
+    },
+    publishAllStatus: async (_, args) => {
+      const { status } = args;
+
+      await client.publish("/feeds/all/status", status.toString());
+      return true;
+    },
+    changeAllStatus: async (_, args) => {
+      const { status } = args;
+      await Device.updateMany({}, { $set: { status: status } });
       return true;
     }
   }
