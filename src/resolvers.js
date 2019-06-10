@@ -320,6 +320,7 @@ export const resolvers = {
     publishAllStatus: async (_, args) => {
       const { status } = args;
 
+      const client = CreateCon("app");
       await client.publish("/feeds/all/status", status.toString());
       return true;
     },
