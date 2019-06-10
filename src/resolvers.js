@@ -319,13 +319,14 @@ export const resolvers = {
     },
     publishAllStatus: async (_, args) => {
       const { status } = args;
-
+      console.log(status);
       const client = CreateCon("app2");
       await client.publish("/feeds/all/status", status.toString());
       return true;
     },
     changeAllStatus: async (_, args) => {
       const { status } = args;
+      console.log(status);
       await Device.updateMany({}, { $set: { status: status } });
       return true;
     }
