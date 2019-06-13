@@ -226,7 +226,7 @@ export const resolvers = {
       const olddevice = await Device.findOne({ device_id });
       await Device.findOneAndUpdate(
         { device_id },
-        { $set: { status: !olddevice.status } }
+        { $set: { status: !olddevice.status, sync: false } }
       );
       const device = await Device.findOne({ device_id });
       return device;
@@ -237,7 +237,7 @@ export const resolvers = {
       console.log(value);
       const response = await Device.findOneAndUpdate(
         { device_id },
-        { $set: { status: value } }
+        { $set: { status: value, sync: false } }
       );
       if (!response.data) {
         return false;
@@ -267,7 +267,7 @@ export const resolvers = {
       console.log(temp);
       const res = await Device.findOneAndUpdate(
         { device_id: device_id },
-        { $set: { temp: temp } }
+        { $set: { temp: temp, sync: false } }
       );
       const dev = await Device.findOne({ device_id });
       console.log(dev);
@@ -314,7 +314,10 @@ export const resolvers = {
     changeAllTemp: async (_, args) => {
       const { temp } = args;
 
-      await Device.updateMany({ status: true }, { $set: { temp: temp } });
+      await Device.updateMany(
+        { status: true },
+        { $set: { temp: temp, sync: true } }
+      );
       return true;
     },
     publishAllStatus: async (_, args) => {
@@ -327,7 +330,7 @@ export const resolvers = {
     changeAllStatus: async (_, args) => {
       const { status } = args;
       console.log(status);
-      await Device.updateMany({}, { $set: { status: status } });
+      await Device.updateMany({}, { $set: { status: status, sync: false } });
       return true;
     }
   }

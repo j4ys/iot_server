@@ -32,6 +32,11 @@ const Device = mongoose.model("Device", {
     type: Boolean,
     required: true,
     default: false
+  },
+  sync: {
+    type: Boolean,
+    required: true,
+    default: false
   }
 });
 
