@@ -19,6 +19,7 @@ export const typeDefs = gql`
     location: String!
     ctemp: Int
     human: Boolean!
+    sync: Boolean!
   }
 
   type Error {
