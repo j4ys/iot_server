@@ -30,7 +30,7 @@ const startServer = async () => {
     context: ({ req, res }) => ({ req, res }),
     cors: {
       credentials: true,
-      origin: "https://embryo.netlify.com"
+      origin: "localhost:3000"
     }
   });
 
