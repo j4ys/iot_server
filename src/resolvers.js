@@ -133,19 +133,12 @@ export const resolvers = {
       }
       const { device_id, name } = args;
       const deviceIdAlreadyExist = await Device.findOne({ device_id });
-      const nameAlreadyExist = await Device.findOne({ name });
       let alreadyExistError = [];
       console.log(deviceIdAlreadyExist);
       if (deviceIdAlreadyExist) {
         alreadyExistError.push({
           path: "device_id",
           message: "this device_id already exist"
-        });
-      }
-      if (nameAlreadyExist) {
-        alreadyExistError.push({
-          path: "name",
-          message: "device name already in use"
         });
       }
       if (alreadyExistError.length !== 0) {
@@ -186,6 +179,7 @@ export const resolvers = {
       } catch {}
     },
     plusTemp: async (_, args, { req, res }) => {
+	    console.log("plus Temp");
       const { device_id } = args;
       // await Device.findOneAndUpdate({ device_id }, { $inc: { temp: 1 } });
 
@@ -204,6 +198,7 @@ export const resolvers = {
       return device;
     },
     minusTemp: async (_, args, { req, res }) => {
+	    console.log("minus temp");
       const { device_id } = args;
       // await Device.findOneAndUpdate({ device_id }, { $inc: { temp: -1 } });
       const device = await Device.findOne({ device_id });
@@ -329,9 +324,9 @@ export const resolvers = {
     },
     changeAllStatus: async (_, args) => {
       const { status } = args;
-      console.log(status);
-      await Device.updateMany({}, { $set: { status: status, sync: false } });
-      return true;
+	    console.log(status);
+	    await Device.updateMany({}, {$set: {status: status, sync: false}});
+	    return true;
     }
   }
-};
+}

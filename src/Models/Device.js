@@ -4,7 +4,6 @@ const Device = mongoose.model("Device", {
   name: {
     type: String,
     required: true,
-    unique: true
   },
   device_id: {
     type: String,

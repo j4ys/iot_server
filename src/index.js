@@ -25,6 +25,7 @@ const startServer = async () => {
     console.log(err);
   }
   const server = new ApolloServer({
+    playground: false,
     typeDefs,
     resolvers,
     context: ({ req, res }) => ({ req, res }),
